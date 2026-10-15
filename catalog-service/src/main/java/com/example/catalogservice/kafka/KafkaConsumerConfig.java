@@ -1,0 +1,37 @@
+package com.example.catalogservice.kafka;
+
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+//@EnableKafka
+//@Configuration
+public class KafkaConsumerConfig {
+    //@Bean
+    public ConsumerFactory<String,String> consumerFactory(){
+        Map<String,Object> properties=new HashMap<>();
+        // kafka container host
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG,"consumerGroupId");
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"product-service-group");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(properties);
+    }
+
+    //@Bean
+    public ConcurrentKafkaListenerContainerFactory<String,String>KafkaListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<String,String>KafkaListenerContainerFactory=
+                new ConcurrentKafkaListenerContainerFactory<>();
+        KafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
+        return KafkaListenerContainerFactory;
+    }
+}
